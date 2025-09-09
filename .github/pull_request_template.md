@@ -43,6 +43,7 @@
 ## Testing
 
 ### Test Coverage
+
 - [ ] Unit tests added/updated
 - [ ] Integration tests added/updated
 - [ ] Manual testing completed
@@ -52,6 +53,7 @@
 <!-- Describe the testing performed and results -->
 
 ### Platforms Tested
+
 - [ ] iOS (Device/Simulator)
 - [ ] Android (Device/Emulator)
 - [ ] Web (Chrome/Safari/Firefox)
@@ -104,6 +106,7 @@
 ## Checklist
 
 ### Code Quality
+
 - [ ] Code follows the project's style guidelines
 - [ ] Self-review of the code has been performed
 - [ ] Code is properly commented
@@ -111,12 +114,14 @@
 - [ ] No hardcoded values or secrets
 
 ### Security
+
 - [ ] No sensitive data exposed in logs
 - [ ] Input validation implemented where needed
 - [ ] Authentication/authorization properly handled
 - [ ] No security vulnerabilities introduced
 
 ### Documentation
+
 - [ ] Code is self-documenting
 - [ ] Complex logic is commented
 - [ ] README updated if needed
@@ -124,12 +129,14 @@
 - [ ] Changelog updated if needed
 
 ### Testing
+
 - [ ] All existing tests pass
 - [ ] New tests added for new functionality
 - [ ] Edge cases considered and tested
 - [ ] Error handling tested
 
 ### Platform-Specific
+
 - [ ] iOS: No memory leaks or retain cycles
 - [ ] Android: Proper lifecycle management
 - [ ] Web: Cross-browser compatibility
@@ -158,6 +165,7 @@
 ## For Reviewers
 
 ### Review Checklist
+
 - [ ] Code quality and style
 - [ ] Security implications
 - [ ] Performance impact

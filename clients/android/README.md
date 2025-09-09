@@ -64,6 +64,7 @@ A privacy-first ephemeral messaging app for Android built with Jetpack Compose.
    - Whisp server running on localhost:4000
 
 2. **Build & Run**:
+
    ```bash
    cd clients/android
    ./build.sh  # Optional: build from command line
@@ -80,6 +81,7 @@ A privacy-first ephemeral messaging app for Android built with Jetpack Compose.
 ## API Integration
 
 The app connects to the Whisp server API endpoints:
+
 - `POST /register` - User registration
 - `POST /login` - User authentication
 - `POST /friends/add` - Add friend
@@ -95,6 +97,7 @@ The app connects to the Whisp server API endpoints:
 ## Security
 
 This app implements the core privacy principles of Whisp:
+
 - No message persistence
 - Secure credential storage using Android Keystore
 - Ephemeral sessions

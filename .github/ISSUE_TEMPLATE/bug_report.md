@@ -46,17 +46,20 @@ assignees: ''
 ## Environment Details
 
 ### Mobile Devices
+
 - **Device**: [e.g. iPhone 14, Samsung Galaxy S23]
 - **OS**: [e.g. iOS 17.0, Android 13]
 - **App Version**: [e.g. 1.0.0]
 - **Build Type**: [e.g. Debug, Release]
 
 ### Web Browser
+
 - **Browser**: [e.g. Chrome, Safari, Firefox]
 - **Version**: [e.g. 118.0.5993.88]
 - **OS**: [e.g. macOS 14.0, Windows 11]
 
 ### Server Environment
+
 - **Node.js Version**: [e.g. 18.17.0]
 - **Environment**: [e.g. Development, Production]
 - **Database**: [e.g. SQLite version]
@@ -65,7 +68,7 @@ assignees: ''
 
 <!-- If applicable, paste any error messages or relevant logs -->
 
-```
+```text
 Paste error messages or logs here
 ```
 

@@ -70,7 +70,7 @@ A privacy-first messaging app with zero server storage. Messages exist only whil
 
 ## Tech Stack
 
-- **Mobile**: 
+- **Mobile**:
   - **Android**: Kotlin + Jetpack Compose + Retrofit + OkHttp
   - **iOS**: Swift + SwiftUI + Combine + URLSession
   - **Cross-platform**: React Native + Expo
@@ -171,6 +171,7 @@ A privacy-first messaging app with zero server storage. Messages exist only whil
 The Whisp application supports multiple environments with flexible configuration:
 
 ### Quick Start (Development)
+
 ```bash
 # Start all services for local development
 ./start-dev.sh
@@ -200,12 +201,14 @@ For detailed configuration instructions, see [ENVIRONMENT_CONFIG.md](./ENVIRONME
 ## Deployment
 
 ### Development
+
 ```bash
 # Start all services for local development
 ./start-dev.sh
 ```
 
 ### Production
+
 ```bash
 # Set required environment variables
 export JWT_SECRET="your-super-secure-jwt-secret"
@@ -218,21 +221,25 @@ export CORS_ORIGIN="https://yourdomain.com"
 ## 📱 Client Applications
 
 ### Android
+
 - **Technology**: Kotlin + Jetpack Compose
 - **Build**: `cd clients/android && ./gradlew assembleDebug`
 - **Run**: Open in Android Studio or `./gradlew installDebug`
 
 ### iOS
+
 - **Technology**: Swift + SwiftUI
 - **Build**: Open `clients/ios/Whisp/Whisp.xcodeproj` in Xcode
 - **Run**: Build and run on device/simulator
 
 ### Expo (Cross-platform)
+
 - **Technology**: React Native + Expo
 - **Build**: `cd clients/expo && npm run start:dev`
 - **Run**: Scan QR code with Expo Go app
 
 ### Vue (Web)
+
 - **Technology**: Vue.js 3 + Axios
 - **Build**: Open `clients/vue/index.html` in browser
 - **Run**: Serve from any web server

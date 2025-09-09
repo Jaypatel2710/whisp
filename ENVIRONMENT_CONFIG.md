@@ -17,6 +17,7 @@ The Whisp application supports multiple environments with different configuratio
 The Expo client uses different `app.json` files for different environments:
 
 #### Development
+
 ```bash
 # Use development configuration
 npm run start:dev
@@ -25,10 +26,12 @@ expo start --config app.dev.json
 ```
 
 **Configuration**: `app.dev.json`
+
 - API URL: `http://localhost:4000`
 - App Name: "whisp-client-expo (Dev)"
 
 #### Production
+
 ```bash
 # Use production configuration
 npm run start:prod
@@ -37,6 +40,7 @@ expo start --config app.prod.json
 ```
 
 **Configuration**: `app.prod.json`
+
 - API URL: `https://api.whisp.app`
 - App Name: "Whisp"
 - Bundle ID: `com.whisp.app`
@@ -56,16 +60,19 @@ You can also set `window.ENV.API_URL` to override the automatic detection.
 The iOS client uses build configurations and Info.plist settings:
 
 #### Development Build
+
 - API URL: `http://localhost:4000`
 - WebSocket URL: `ws://localhost:4000`
 - Configuration: Debug build
 
 #### Production Build
+
 - API URL: `https://api.whisp.app`
 - WebSocket URL: `wss://api.whisp.app`
 - Configuration: Release build
 
 **Custom Configuration**: Update `Info.plist` with your URLs:
+
 ```xml
 <key>API_BASE_URL</key>
 <string>https://your-api-domain.com</string>
@@ -78,18 +85,21 @@ The iOS client uses build configurations and Info.plist settings:
 The Android client uses build variants and environment-specific configuration:
 
 #### Development Build
+
 - API URL: `http://192.168.1.16:4000` (configurable IP)
 - WebSocket URL: `ws://192.168.1.16:4000`
 - Configuration: Debug build variant
 - Build Type: `debug`
 
 #### Production Build
+
 - API URL: `https://api.whisp.app`
 - WebSocket URL: `wss://api.whisp.app`
 - Configuration: Release build variant
 - Build Type: `release`
 
 **Custom Configuration**: Update `APIClient.kt` and `WebSocketClient.kt`:
+
 ```kotlin
 // In APIClient.kt
 baseUrl = if (BuildConfig.DEBUG) {
@@ -107,6 +117,7 @@ baseUrl = if (BuildConfig.DEBUG) {
 ```
 
 **Build Commands**:
+
 ```bash
 # Development build
 ./gradlew assembleDebug
@@ -135,6 +146,7 @@ The server supports the following environment variables:
 ### Running the Server
 
 #### Development
+
 ```bash
 # Using environment file
 npm run dev:env
@@ -144,6 +156,7 @@ NODE_ENV=development PORT=4000 npm run dev
 ```
 
 #### Production
+
 ```bash
 # Using environment file
 npm run prod:env
@@ -155,6 +168,7 @@ NODE_ENV=production PORT=4000 JWT_SECRET=your-secret npm start
 ### Environment Files
 
 #### Development (`env.development`)
+
 ```env
 NODE_ENV=development
 PORT=4000
@@ -165,6 +179,7 @@ LOG_LEVEL=debug
 ```
 
 #### Production (`env.production`)
+
 ```env
 NODE_ENV=production
 PORT=4000
@@ -177,6 +192,7 @@ LOG_LEVEL=info
 ## 🚀 Deployment Examples
 
 ### Local Development
+
 ```bash
 # Option 1: Use the convenience script
 ./start-dev.sh
@@ -199,6 +215,7 @@ cd clients/android
 ```
 
 ### Staging Deployment
+
 ```bash
 # Server
 NODE_ENV=staging PORT=4000 CORS_ORIGIN=https://staging.whisp.app npm start
@@ -208,17 +225,19 @@ NODE_ENV=staging PORT=4000 CORS_ORIGIN=https://staging.whisp.app npm start
 ```
 
 ### Production Deployment
+
 ```bash
 # Server
-NODE_ENV=production PORT=4000 JWT_SECRET=secure-secret CORS_ORIGIN=https://whisp.app npm start
-
-# Clients
-# Use production build configurations
+npm start
 ```
 
-## 🔧 Custom Configuration
+## Clients
 
-### Adding New Environments
+### Use production build configurations
+
+#### 🔧 Custom Configuration
+
+##### Adding New Environments
 
 1. **Expo**: Create new `app.{env}.json` files
 2. **Vue**: Add hostname detection logic
@@ -226,13 +245,13 @@ NODE_ENV=production PORT=4000 JWT_SECRET=secure-secret CORS_ORIGIN=https://whisp
 4. **Android**: Add new build variants in `build.gradle.kts`
 5. **Server**: Create new environment files
 
-### Environment-Specific Features
+##### Environment-Specific Features
 
 - **Development**: Debug logging, localhost URLs, relaxed CORS
 - **Staging**: Production-like setup with test data
 - **Production**: Optimized performance, secure configuration
 
-## 📋 Checklist for New Environments
+### 📋 Checklist for New Environments
 
 - [ ] Create environment-specific configuration files
 - [ ] Update API URLs in all clients

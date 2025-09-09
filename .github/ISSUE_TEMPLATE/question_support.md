@@ -57,12 +57,14 @@ assignees: ''
 ## Environment Details
 
 ### Development Environment
+
 - **OS**: [e.g. macOS 14.0, Windows 11, Ubuntu 22.04]
 - **Node.js Version**: [e.g. 18.17.0]
 - **Package Manager**: [e.g. npm, yarn, pnpm]
 - **IDE/Editor**: [e.g. VS Code, Xcode, Android Studio]
 
 ### Target Platform
+
 - **Platform**: [e.g. iOS 17.0, Android 13, Chrome 118]
 - **Device**: [e.g. iPhone 14, Samsung Galaxy S23]
 - **Environment**: [e.g. Development, Production]
@@ -71,7 +73,7 @@ assignees: ''
 
 <!-- If you're getting errors, paste them here -->
 
-```
+```text
 Paste error messages here
 ```
 

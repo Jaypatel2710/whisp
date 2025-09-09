@@ -78,6 +78,7 @@ As a [type of user], I want [goal] so that [benefit].
 ## Technical Considerations
 
 ### Implementation Complexity
+
 - [ ] Simple (1-2 days)
 - [ ] Medium (1-2 weeks)
 - [ ] Complex (1+ months)
@@ -87,6 +88,7 @@ As a [type of user], I want [goal] so that [benefit].
 <!-- List any dependencies or prerequisites -->
 
 ### Performance Impact
+
 - [ ] No performance impact
 - [ ] Minimal performance impact
 - [ ] May affect performance

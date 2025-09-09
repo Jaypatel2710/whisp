@@ -1,3 +1,5 @@
+<!-- markdownlint-disable -->
+
 Love the idea—“phone-call style” messaging with zero server storage. Below is a concrete, privacy-first design you can ship.
 
 # 1) Core principles

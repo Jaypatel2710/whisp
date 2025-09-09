@@ -53,6 +53,7 @@ assignees: ''
 ## Environment Details
 
 ### Device Information
+
 - **Device**: [e.g. iPhone 14 Pro, Samsung Galaxy S23]
 - **OS**: [e.g. iOS 17.0, Android 13]
 - **App Version**: [e.g. 1.0.0]
@@ -60,11 +61,13 @@ assignees: ''
 - **Storage Space**: [e.g. 50GB free]
 
 ### Network Conditions
+
 - **Connection Type**: [e.g. WiFi, 4G, 5G]
 - **Speed**: [e.g. 100 Mbps down, 50 Mbps up]
 - **Latency**: [e.g. 20ms]
 
 ### Server Environment
+
 - **Node.js Version**: [e.g. 18.17.0]
 - **Memory**: [e.g. 2GB]
 - **CPU**: [e.g. 2 cores]
@@ -85,7 +88,7 @@ assignees: ''
 ### Profiling Results
 <!-- Paste relevant profiling data or screenshots -->
 
-```
+```text
 Paste profiling results here
 ```
 
