@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Whisp Web (MVP)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          sans-serif;
+        margin: 0;
+        background: #fafafa;
+      }
+      .wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 16px;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 16px;
+        margin-top: 12px;
+      }
+      .row {
+        display: flex;
+        gap: 8px;
+      }
+      .col {
+        flex: 1;
+      }
+      input,
+      button,
+      select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+      button {
+        cursor: pointer;
+      }
+      .list {
+        border-top: 1px solid #eee;
+        margin-top: 8px;
+      }
+      .item {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .badge {
+        font-size: 12px;
+        padding: 2px 6px;
+        border-radius: 10px;
+      }
+      .online {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .offline {
+        background: #eee;
+        color: #666;
+      }
+      .msg {
+        margin: 8px 0;
+      }
+      .msg .from {
+        font-weight: 600;
+        margin-right: 6px;
+      }
+      .chat-box {
+        height: 50vh;
+        overflow: auto;
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 10px;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .thumb {
+        max-width: 240px;
+        max-height: 240px;
+        display: block;
+        border-radius: 6px;
+        border: 1px solid #eee;
+      }
+      video {
+        width: 240px;
+        height: 180px;
+        background: #000;
+        border-radius: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app" class="wrap">
+      <h2>Whisp Web (MVP)</h2>
+
+      <!-- Auth card -->
+      <div class="card" v-if="stage==='auth'">
+        <div class="row">
+          <div class="col">
+            <label>Username</label>
+            <input v-model="username" placeholder="alice" autocomplete="off" />
+          </div>
+          <div class="col">
+            <label>Device Token</label>
+            <input
+              v-model="deviceToken"
+              placeholder="(obtained after Register)"
+              autocomplete="off" />
+          </div>
+        </div>
+        <div class="row" style="margin-top: 8px">
+          <button @click="registerUser">Register</button>
+          <button @click="loginUser">Login</button>
+        </div>
+        <p v-if="regDeviceToken" style="font-size: 12px; margin-top: 8px">
+          <strong>New Device Token:</strong>
+          <code>{{regDeviceToken}}</code> (store securely)
+        </p>
+        <p v-if="error" style="color: #b91c1c">{{error}}</p>
+      </div>
+
+      <!-- Friends card -->
+      <div class="card" v-if="stage==='friends'">
+        <div class="row">
+          <div class="col">
+            <strong>Hello, {{username}}</strong>
+          </div>
+          <div>
+            <button @click="refreshFriends">Refresh</button>
+            <button @click="disconnect">Disconnect</button>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top: 12px">
+          <input
+            class="col"
+            v-model="newFriend"
+            placeholder="Add friend by username" />
+          <button @click="addFriend">Add</button>
+        </div>
+
+        <div class="list">
+          <div class="item" v-for="f in friends" :key="f.username">
+            <div>{{f.username}}</div>
+            <div class="row">
+              <span class="badge" :class="f.online ? 'online' : 'offline'"
+                >{{ f.online ? 'online' : 'offline' }}</span
+              >
+              <button @click="openChat(f.username)" :disabled="!token">
+                Chat
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat card -->
+      <div class="card" v-if="stage==='chat'">
+        <div
+          class="row"
+          style="justify-content: space-between; align-items: center">
+          <strong>Chat with {{peer}}</strong>
+          <div class="row">
+            <button @click="backToFriends">Back</button>
+            <button @click="refreshFriends">Refresh Friends</button>
+          </div>
+        </div>
+
+        <div class="chat-box" ref="chatBox">
+          <div class="msg" v-for="(m,i) in filteredMsgs" :key="i">
+            <span class="from">{{ m.from === 'me' ? 'You' : m.from }}:</span>
+            <template v-if="m.type==='chat'">
+              <span>{{m.text}}</span>
+            </template>
+            <template v-else-if="m.type==='file'">
+              <template v-if="m.mime.startsWith('image/')">
+                <img
+                  class="thumb"
+                  :src="m.objectUrl || m.dataUrl"
+                  :alt="m.name" />
+              </template>
+              <template v-else>
+                <a :href="m.objectUrl || m.dataUrl" :download="m.name"
+                  >Download {{m.name}} ({{prettySize(m.size)}})</a
+                >
+              </template>
+            </template>
+          </div>
+        </div>
+
+        <div class="actions" style="margin-top: 8px">
+          <input
+            class="col"
+            v-model="text"
+            placeholder="Type a message..."
+            @keyup.enter="sendText" />
+          <button @click="sendText" :disabled="!text">Send</button>
+
+          <!-- File picker -->
+          <input
+            type="file"
+            ref="fileInput"
+            style="display: none"
+            @change="pickedFile" />
+          <button @click="$refs.fileInput.click()">Send File</button>
+
+          <!-- Camera capture (no storage) -->
+          <button @click="toggleCamera">
+            {{ cameraOn ? 'Stop Camera' : 'Open Camera' }}
+          </button>
+          <button @click="snap" :disabled="!cameraOn">Snap & Send</button>
+        </div>
+
+        <!-- Hidden canvas to extract image Blob -->
+        <div class="row" style="margin-top: 8px" v-if="cameraOn">
+          <video ref="video" autoplay playsinline></video>
+          <canvas ref="canvas" style="display: none"></canvas>
+        </div>
+
+        <p v-if="error" style="color: #b91c1c; margin-top: 8px">{{error}}</p>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script>
+      const API_BASE = 'http://localhost:4000'
+
+      const app = Vue.createApp({
+        data() {
+          return {
+            stage: 'auth', // 'auth' | 'friends' | 'chat'
+            username: '',
+            deviceToken: '',
+            regDeviceToken: '',
+            token: null,
+            ws: null,
+
+            friends: [],
+            newFriend: '',
+            msgs: [], // {type:'chat'|'file', from:'me'|username, text?, name?, mime?, size?, dataUrl?, objectUrl?, ts}
+            peer: null,
+            text: '',
+            error: '',
+
+            cameraOn: false,
+          }
+        },
+        computed: {
+          filteredMsgs() {
+            return this.msgs.filter(
+              (m) => m.from === 'me' || m.from === this.peer
+            )
+          },
+        },
+        methods: {
+          // --- Auth ---
+          async registerUser() {
+            this.error = ''
+            this.regDeviceToken = ''
+            try {
+              const { data } = await axios.post(`${API_BASE}/register`, {
+                username: this.username,
+              })
+              this.regDeviceToken = data.deviceToken
+              this.deviceToken = data.deviceToken
+            } catch (e) {
+              this.error = e?.response?.data?.error || 'Register failed'
+            }
+          },
+          async loginUser() {
+            this.error = ''
+            try {
+              const { data } = await axios.post(`${API_BASE}/login`, {
+                username: this.username,
+                deviceToken: this.deviceToken,
+              })
+              this.token = data.token
+              axios.defaults.headers.common[
+                'Authorization'
+              ] = `Bearer ${this.token}`
+              this.connectWS()
+              await this.refreshFriends()
+              this.stage = 'friends'
+            } catch (e) {
+              this.error = e?.response?.data?.error || 'Login failed'
+            }
+          },
+
+          // --- Friends ---
+          async refreshFriends() {
+            if (!this.token) return
+            const { data } = await axios.get(`${API_BASE}/friends`)
+            this.friends = data.friends || []
+          },
+          async addFriend() {
+            this.error = ''
+            const friendUsername = (this.newFriend || '').trim()
+            if (!friendUsername) return
+            try {
+              await axios.post(`${API_BASE}/friends/add`, { friendUsername })
+              this.newFriend = ''
+              await this.refreshFriends()
+            } catch (e) {
+              this.error = e?.response?.data?.error || 'Add friend failed'
+            }
+          },
+
+          // --- WS ---
+          connectWS() {
+            if (this.ws)
+              try {
+                this.ws.close()
+              } catch {}
+            this.ws = new WebSocket(
+              `${API_BASE.replace('http', 'ws')}/ws?token=${this.token}`
+            )
+            this.ws.onopen = () => console.log('WS connected')
+            this.ws.onclose = () => console.log('WS closed')
+            this.ws.onmessage = (ev) => {
+              const m = JSON.parse(ev.data)
+              if (m.type === 'presence') return
+              if (m.type === 'chat') {
+                this.msgs.push({
+                  type: 'chat',
+                  from: m.from,
+                  text: m.text,
+                  ts: m.ts,
+                })
+                this.$nextTick(() => this.scrollChat())
+              }
+              if (m.type === 'file') {
+                const dataUrl = `data:${m.mime};base64,${m.dataB64}`
+                let objectUrl = null
+                try {
+                  const bin = atob(m.dataB64)
+                  const bytes = new Uint8Array(bin.length)
+                  for (let i = 0; i < bin.length; i++)
+                    bytes[i] = bin.charCodeAt(i)
+                  const blob = new Blob([bytes], { type: m.mime })
+                  objectUrl = URL.createObjectURL(blob)
+                } catch {}
+                this.msgs.push({
+                  type: 'file',
+                  from: m.from,
+                  name: m.name,
+                  mime: m.mime,
+                  size: m.size,
+                  dataUrl,
+                  objectUrl,
+                  ts: m.ts,
+                })
+                this.$nextTick(() => this.scrollChat())
+              }
+            }
+          },
+          disconnect() {
+            if (this.ws) this.ws.close()
+            this.ws = null
+            this.token = null
+            this.friends = []
+            this.msgs = []
+            this.stage = 'auth'
+          },
+
+          // --- Chat ---
+          openChat(username) {
+            this.peer = username
+            this.stage = 'chat'
+            this.$nextTick(() => this.scrollChat())
+          },
+          backToFriends() {
+            this.stage = 'friends'
+            // do not persist msgs across sessions → ephemeral
+          },
+          sendText() {
+            const text = (this.text || '').trim()
+            if (!text || !this.ws || this.ws.readyState !== 1) return
+            this.ws.send(JSON.stringify({ type: 'chat', to: this.peer, text }))
+            this.msgs.push({ type: 'chat', from: 'me', text, ts: Date.now() })
+            this.text = ''
+            this.$nextTick(() => this.scrollChat())
+          },
+          async pickedFile(ev) {
+            const file = ev.target.files?.[0]
+            ev.target.value = '' // reset picker
+            if (!file || !this.peer) return
+            await this.sendFileBlob(
+              file,
+              file.name,
+              file.type || 'application/octet-stream'
+            )
+          },
+          async sendFileBlob(blob, name, mime) {
+            if (!this.ws || this.ws.readyState !== 1) return
+            const dataB64 = await this.blobToBase64(blob)
+            this.ws.send(
+              JSON.stringify({
+                type: 'file',
+                to: this.peer,
+                name,
+                mime,
+                size: blob.size,
+                dataB64,
+              })
+            )
+            // Show mine
+            const dataUrl = `data:${mime};base64,${dataB64}`
+            let objectUrl = null
+            try {
+              objectUrl = URL.createObjectURL(blob)
+            } catch {}
+            this.msgs.push({
+              type: 'file',
+              from: 'me',
+              name,
+              mime,
+              size: blob.size,
+              dataUrl,
+              objectUrl,
+              ts: Date.now(),
+            })
+            this.$nextTick(() => this.scrollChat())
+          },
+          blobToBase64(blob) {
+            return new Promise((resolve, reject) => {
+              const reader = new FileReader()
+              reader.onload = () => {
+                const res = reader.result // data:*/*;base64,....
+                const b64 = String(res).split(',')[1] || ''
+                resolve(b64)
+              }
+              reader.onerror = reject
+              reader.readAsDataURL(blob)
+            })
+          },
+          prettySize(n) {
+            if (n < 1024) return n + ' B'
+            if (n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB'
+            return (n / 1024 / 1024).toFixed(2) + ' MB'
+          },
+          scrollChat() {
+            const box = this.$refs.chatBox
+            if (box) box.scrollTop = box.scrollHeight
+          },
+
+          // --- Camera (no storage) ---
+          async toggleCamera() {
+            if (this.cameraOn) {
+              this.stopCamera()
+              return
+            }
+            try {
+              const stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'environment' },
+                audio: false,
+              })
+              const video = this.$refs.video
+              video.srcObject = stream
+              await video.play()
+              this.cameraOn = true
+            } catch (e) {
+              this.error = 'Camera access denied or unavailable'
+            }
+          },
+          stopCamera() {
+            const video = this.$refs.video
+            const stream = video?.srcObject
+            if (stream) {
+              for (const t of stream.getTracks()) t.stop()
+            }
+            video.srcObject = null
+            this.cameraOn = false
+          },
+          async snap() {
+            if (!this.cameraOn) return
+            const video = this.$refs.video
+            const canvas = this.$refs.canvas
+            const w = video.videoWidth || 640,
+              h = video.videoHeight || 480
+            canvas.width = w
+            canvas.height = h
+            const ctx = canvas.getContext('2d')
+            ctx.drawImage(video, 0, 0, w, h)
+            // Convert to Blob (no saving to disk)
+            canvas.toBlob(
+              async (blob) => {
+                if (!blob) return
+                await this.sendFileBlob(
+                  blob,
+                  `capture-${Date.now()}.jpg`,
+                  blob.type || 'image/jpeg'
+                )
+              },
+              'image/jpeg',
+              0.92
+            )
+          },
+        },
+      })
+
+      app.mount('#app')
+    </script>
+  </body>
+</html>
