@@ -1,0 +1,14 @@
+{
+  "name": "whisp",
+  "version": "1.0.0",
+  "description": "A privacy-first messaging app",
+  "license": "MIT",
+  "author": "Krushn Dayshmookh <krushn@dayshmookh.com>",
+  "type": "module",
+  "scripts": {
+    "format": "prettier --write . --ignore-path .gitignore --ext .js,.json,.md,.css,.html"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2"
+  }
+}

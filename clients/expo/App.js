@@ -1,13 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import {
-  SafeAreaView,
-  View,
-  Text,
-  TextInput,
-  Button,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native'
+import { SafeAreaView, View, Text, TextInput, Button, FlatList, TouchableOpacity } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { api, setAuth, API_BASE } from './api'
 
@@ -28,15 +20,13 @@ export default function App() {
   const [autoLogin, setAutoLogin] = useState(false)
 
   // --- helpers ---
-  const connectWS = (jwt) => {
-    const ws = new WebSocket(
-      `${API_BASE.replace('http', 'ws')}/ws?token=${jwt}`
-    )
+  const connectWS = jwt => {
+    const ws = new WebSocket(`${API_BASE.replace('http', 'ws')}/ws?token=${jwt}`)
     ws.onopen = () => console.log('WS connected')
-    ws.onmessage = (e) => {
+    ws.onmessage = e => {
       const m = JSON.parse(e.data)
       if (m.type === 'chat') {
-        setMsgs((prev) => [...prev, { from: m.from, text: m.text, ts: m.ts }])
+        setMsgs(prev => [...prev, { from: m.from, text: m.text, ts: m.ts }])
       }
     }
     ws.onclose = () => console.log('WS closed')
@@ -48,17 +38,14 @@ export default function App() {
     const { data } = await api.post('/register', { username })
     setDeviceToken(data.deviceToken)
     // save deviceToken to local storage
-    await AsyncStorage.setItem(
-      'credentials',
-      JSON.stringify({ username, deviceToken })
-    )
+    await AsyncStorage.setItem('credentials', JSON.stringify({ username, deviceToken }))
   }
 
   // check local storage for credentials
   useEffect(() => {
     console.log('Checking local storage for credentials')
     AsyncStorage.getItem('credentials')
-      .then((credentials) => {
+      .then(credentials => {
         if (credentials) {
           credentials = JSON.parse(credentials)
           console.log('Credentials:', credentials)
@@ -71,7 +58,7 @@ export default function App() {
           setStage('auth')
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.error('Error checking local storage for credentials:', error)
       })
   }, [])
@@ -87,10 +74,7 @@ export default function App() {
       setStage('friends')
     } else {
       // save deviceToken to local storage
-      await AsyncStorage.setItem(
-        'credentials',
-        JSON.stringify({ username, deviceToken })
-      )
+      await AsyncStorage.setItem('credentials', JSON.stringify({ username, deviceToken }))
     }
   }
 
@@ -152,9 +136,7 @@ export default function App() {
   if (stage === 'friends') {
     return (
       <SafeAreaView style={{ flex: 1, padding: 16 }}>
-        <Text style={{ fontSize: 18, fontWeight: '600' }}>
-          Hello, {username}
-        </Text>
+        <Text style={{ fontSize: 18, fontWeight: '600' }}>Hello, {username}</Text>
         <View style={{ flexDirection: 'row', gap: 8, marginTop: 12 }}>
           <TextInput
             placeholder="Add friend by username"
@@ -177,19 +159,21 @@ export default function App() {
         <FlatList
           style={{ marginTop: 16 }}
           data={friends}
-          keyExtractor={(x) => x.username}
+          keyExtractor={x => x.username}
           renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => {
                 setSelectedFriend(item.username)
                 setStage('chat')
-              }}>
+              }}
+            >
               <View
                 style={{
                   paddingVertical: 12,
                   borderBottomWidth: 1,
                   borderColor: '#eee',
-                }}>
+                }}
+              >
                 <Text style={{ fontSize: 16 }}>
                   {item.username} {item.online ? '🟢' : '⚪️'}
                 </Text>
@@ -204,31 +188,22 @@ export default function App() {
   if (stage === 'chat') {
     function send() {
       if (!text || !wsRef.current) return
-      wsRef.current.send(
-        JSON.stringify({ type: 'chat', to: selectedFriend, text })
-      )
-      setMsgs((prev) => [...prev, { from: 'me', text, ts: Date.now() }])
+      wsRef.current.send(JSON.stringify({ type: 'chat', to: selectedFriend, text }))
+      setMsgs(prev => [...prev, { from: 'me', text, ts: Date.now() }])
       setText('')
     }
     return (
       <SafeAreaView style={{ flex: 1, padding: 16 }}>
-        <Text style={{ fontSize: 16, fontWeight: '600' }}>
-          Chat with {selectedFriend}
-        </Text>
+        <Text style={{ fontSize: 16, fontWeight: '600' }}>Chat with {selectedFriend}</Text>
 
         <FlatList
           style={{ marginTop: 12, flex: 1 }}
-          data={msgs.filter(
-            (m) => m.from === 'me' || m.from === selectedFriend
-          )}
+          data={msgs.filter(m => m.from === 'me' || m.from === selectedFriend)}
           keyExtractor={(_, i) => String(i)}
           renderItem={({ item }) => (
             <View style={{ paddingVertical: 6 }}>
               <Text>
-                <Text style={{ fontWeight: '600' }}>
-                  {item.from === 'me' ? 'You' : item.from}:
-                </Text>{' '}
-                {item.text}
+                <Text style={{ fontWeight: '600' }}>{item.from === 'me' ? 'You' : item.from}:</Text> {item.text}
               </Text>
             </View>
           )}

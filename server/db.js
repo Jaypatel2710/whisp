@@ -1,5 +1,5 @@
-const Database = require('better-sqlite3');
-const db = new Database('anonchat.sqlite');
+const Database = require('better-sqlite3')
+const db = new Database('anonchat.sqlite')
 
 // tables: users, friends
 db.exec(`
@@ -16,6 +16,6 @@ CREATE TABLE IF NOT EXISTS friends (
   created_at INTEGER NOT NULL,
   UNIQUE(user_id, friend_username)
 );
-`);
+`)
 
-module.exports = db;
+module.exports = db

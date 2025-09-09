@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -6,7 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
       body {
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial,
+        font-family:
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Arial,
           sans-serif;
         margin: 0;
         background: #fafafa;
@@ -113,10 +118,7 @@
           </div>
           <div class="col">
             <label>Device Token</label>
-            <input
-              v-model="deviceToken"
-              placeholder="(obtained after Register)"
-              autocomplete="off" />
+            <input v-model="deviceToken" placeholder="(obtained after Register)" autocomplete="off" />
           </div>
         </div>
         <div class="row" style="margin-top: 8px">
@@ -143,10 +145,7 @@
         </div>
 
         <div class="row" style="margin-top: 12px">
-          <input
-            class="col"
-            v-model="newFriend"
-            placeholder="Add friend by username" />
+          <input class="col" v-model="newFriend" placeholder="Add friend by username" />
           <button @click="addFriend">Add</button>
         </div>
 
@@ -154,12 +153,8 @@
           <div class="item" v-for="f in friends" :key="f.username">
             <div>{{f.username}}</div>
             <div class="row">
-              <span class="badge" :class="f.online ? 'online' : 'offline'"
-                >{{ f.online ? 'online' : 'offline' }}</span
-              >
-              <button @click="openChat(f.username)" :disabled="!token">
-                Chat
-              </button>
+              <span class="badge" :class="f.online ? 'online' : 'offline'">{{ f.online ? 'online' : 'offline' }}</span>
+              <button @click="openChat(f.username)" :disabled="!token">Chat</button>
             </div>
           </div>
         </div>
@@ -167,9 +162,7 @@
 
       <!-- Chat card -->
       <div class="card" v-if="stage==='chat'">
-        <div
-          class="row"
-          style="justify-content: space-between; align-items: center">
+        <div class="row" style="justify-content: space-between; align-items: center">
           <strong>Chat with {{peer}}</strong>
           <div class="row">
             <button @click="backToFriends">Back</button>
@@ -185,40 +178,25 @@
             </template>
             <template v-else-if="m.type==='file'">
               <template v-if="m.mime.startsWith('image/')">
-                <img
-                  class="thumb"
-                  :src="m.objectUrl || m.dataUrl"
-                  :alt="m.name" />
+                <img class="thumb" :src="m.objectUrl || m.dataUrl" :alt="m.name" />
               </template>
               <template v-else>
-                <a :href="m.objectUrl || m.dataUrl" :download="m.name"
-                  >Download {{m.name}} ({{prettySize(m.size)}})</a
-                >
+                <a :href="m.objectUrl || m.dataUrl" :download="m.name">Download {{m.name}} ({{prettySize(m.size)}})</a>
               </template>
             </template>
           </div>
         </div>
 
         <div class="actions" style="margin-top: 8px">
-          <input
-            class="col"
-            v-model="text"
-            placeholder="Type a message..."
-            @keyup.enter="sendText" />
+          <input class="col" v-model="text" placeholder="Type a message..." @keyup.enter="sendText" />
           <button @click="sendText" :disabled="!text">Send</button>
 
           <!-- File picker -->
-          <input
-            type="file"
-            ref="fileInput"
-            style="display: none"
-            @change="pickedFile" />
+          <input type="file" ref="fileInput" style="display: none" @change="pickedFile" />
           <button @click="$refs.fileInput.click()">Send File</button>
 
           <!-- Camera capture (no storage) -->
-          <button @click="toggleCamera">
-            {{ cameraOn ? 'Stop Camera' : 'Open Camera' }}
-          </button>
+          <button @click="toggleCamera">{{ cameraOn ? 'Stop Camera' : 'Open Camera' }}</button>
           <button @click="snap" :disabled="!cameraOn">Snap & Send</button>
         </div>
 
@@ -259,9 +237,7 @@
         },
         computed: {
           filteredMsgs() {
-            return this.msgs.filter(
-              (m) => m.from === 'me' || m.from === this.peer
-            )
+            return this.msgs.filter(m => m.from === 'me' || m.from === this.peer)
           },
         },
         methods: {
@@ -287,9 +263,7 @@
                 deviceToken: this.deviceToken,
               })
               this.token = data.token
-              axios.defaults.headers.common[
-                'Authorization'
-              ] = `Bearer ${this.token}`
+              axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
               this.connectWS()
               await this.refreshFriends()
               this.stage = 'friends'
@@ -323,12 +297,10 @@
               try {
                 this.ws.close()
               } catch {}
-            this.ws = new WebSocket(
-              `${API_BASE.replace('http', 'ws')}/ws?token=${this.token}`
-            )
+            this.ws = new WebSocket(`${API_BASE.replace('http', 'ws')}/ws?token=${this.token}`)
             this.ws.onopen = () => console.log('WS connected')
             this.ws.onclose = () => console.log('WS closed')
-            this.ws.onmessage = (ev) => {
+            this.ws.onmessage = ev => {
               const m = JSON.parse(ev.data)
               if (m.type === 'presence') return
               if (m.type === 'chat') {
@@ -346,8 +318,7 @@
                 try {
                   const bin = atob(m.dataB64)
                   const bytes = new Uint8Array(bin.length)
-                  for (let i = 0; i < bin.length; i++)
-                    bytes[i] = bin.charCodeAt(i)
+                  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i)
                   const blob = new Blob([bytes], { type: m.mime })
                   objectUrl = URL.createObjectURL(blob)
                 } catch {}
@@ -396,11 +367,7 @@
             const file = ev.target.files?.[0]
             ev.target.value = '' // reset picker
             if (!file || !this.peer) return
-            await this.sendFileBlob(
-              file,
-              file.name,
-              file.type || 'application/octet-stream'
-            )
+            await this.sendFileBlob(file, file.name, file.type || 'application/octet-stream')
           },
           async sendFileBlob(blob, name, mime) {
             if (!this.ws || this.ws.readyState !== 1) return
@@ -495,13 +462,9 @@
             ctx.drawImage(video, 0, 0, w, h)
             // Convert to Blob (no saving to disk)
             canvas.toBlob(
-              async (blob) => {
+              async blob => {
                 if (!blob) return
-                await this.sendFileBlob(
-                  blob,
-                  `capture-${Date.now()}.jpg`,
-                  blob.type || 'image/jpeg'
-                )
+                await this.sendFileBlob(blob, `capture-${Date.now()}.jpg`, blob.type || 'image/jpeg')
               },
               'image/jpeg',
               0.92

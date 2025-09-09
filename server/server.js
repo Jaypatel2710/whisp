@@ -13,17 +13,11 @@ app.use(cors())
 app.use(express.json())
 
 // --- DB helpers ---
-const insertUser = db.prepare(
-  'INSERT INTO users (id, username, device_token, created_at) VALUES (?, ?, ?, ?)'
-)
+const insertUser = db.prepare('INSERT INTO users (id, username, device_token, created_at) VALUES (?, ?, ?, ?)')
 const getUserByUsername = db.prepare('SELECT * FROM users WHERE username = ?')
 const getUserById = db.prepare('SELECT * FROM users WHERE id = ?')
-const insertFriend = db.prepare(
-  'INSERT OR IGNORE INTO friends (user_id, friend_username, created_at) VALUES (?, ?, ?)'
-)
-const listFriendsByUser = db.prepare(
-  'SELECT friend_username FROM friends WHERE user_id = ?'
-)
+const insertFriend = db.prepare('INSERT OR IGNORE INTO friends (user_id, friend_username, created_at) VALUES (?, ?, ?)')
+const listFriendsByUser = db.prepare('SELECT friend_username FROM friends WHERE user_id = ?')
 const listAllUsernames = db.prepare('SELECT username FROM users')
 
 // --- In-memory presence ---
@@ -89,7 +83,7 @@ app.post('/friends/add', auth, (req, res) => {
 // List friends + online status
 app.get('/friends', auth, (req, res) => {
   const rows = listFriendsByUser.all(req.user.userId)
-  const friends = rows.map((r) => ({
+  const friends = rows.map(r => ({
     username: r.friend_username,
     online: online.has(r.friend_username),
   }))
@@ -98,7 +92,7 @@ app.get('/friends', auth, (req, res) => {
 
 // Optional: list all users (for quick testing)
 app.get('/users', (req, res) => {
-  res.json({ users: listAllUsernames.all().map((r) => r.username) })
+  res.json({ users: listAllUsernames.all().map(r => r.username) })
 })
 
 // --- HTTP server + WebSocket for live messaging (no storage) ---
@@ -142,7 +136,7 @@ wss.on('connection', (ws, req) => {
   // Notify self: you are online + who of your friends is online (client can also poll /friends)
   ws.send(JSON.stringify({ type: 'presence', self: username, online: true }))
 
-  ws.on('message', (data) => {
+  ws.on('message', data => {
     // expected protocol:
     // { type:'chat', to:'bob', text:'hello' }
     // { type:'ping' }
