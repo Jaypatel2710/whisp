@@ -5,11 +5,21 @@ const jwt = require('jsonwebtoken')
 const { v4: uuid } = require('uuid')
 const db = require('./db')
 
+// Environment configuration
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change'
 const PORT = process.env.PORT || 4000
+const NODE_ENV = process.env.NODE_ENV || 'development'
+const CORS_ORIGIN = process.env.CORS_ORIGIN || '*'
+const DB_PATH = process.env.DB_PATH || './anonchat.sqlite'
 
 const app = express()
-app.use(cors())
+
+// Configure CORS based on environment
+const corsOptions = {
+  origin: CORS_ORIGIN === '*' ? true : CORS_ORIGIN.split(','),
+  credentials: true
+}
+app.use(cors(corsOptions))
 app.use(express.json())
 
 // --- DB helpers ---
@@ -96,7 +106,14 @@ app.get('/users', (req, res) => {
 })
 
 // --- HTTP server + WebSocket for live messaging (no storage) ---
-const server = app.listen(PORT, () => console.log(`API on :${PORT}`))
+const server = app.listen(PORT, () => {
+  console.log(`🚀 Whisp Server started`)
+  console.log(`📍 Environment: ${NODE_ENV}`)
+  console.log(`🌐 API URL: http://localhost:${PORT}`)
+  console.log(`🔗 WebSocket URL: ws://localhost:${PORT}/ws`)
+  console.log(`🗄️  Database: ${DB_PATH}`)
+  console.log(`🔐 JWT Secret: ${JWT_SECRET.substring(0, 8)}...`)
+})
 
 const wss = new WebSocketServer({
   server,
