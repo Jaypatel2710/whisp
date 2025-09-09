@@ -70,22 +70,31 @@ A privacy-first messaging app with zero server storage. Messages exist only whil
 
 ## Tech Stack
 
-- **Mobile**: Kotlin/Jetpack + iOS Swift
-- **Transport**: WebRTC or QUIC
-- **Crypto**: libsodium / Noise Protocol Framework / libsignal
-- **Server**: Node.js with Redis (presence) + Postgres (minimal data)
+- **Mobile**: 
+  - **Android**: Kotlin + Jetpack Compose + Retrofit + OkHttp
+  - **iOS**: Swift + SwiftUI + Combine + URLSession
+  - **Cross-platform**: React Native + Expo
+- **Web**: Vue.js 3 + Axios
+- **Transport**: WebSocket + HTTP REST API
+- **Crypto**: Android Keystore + iOS Keychain + JWT
+- **Server**: Node.js + Express + SQLite
 - **Push**: APNs / FCM with opaque tokens
 
 ## MVP Features
 
-- ✅ Account creation and username claim
-- ✅ Device key generation and secure storage
-- ✅ Multi-device support via QR handoff
-- ✅ Friend requests with safety number verification
-- ✅ WebRTC messaging with Double Ratchet encryption
-- ✅ In-memory ephemeral sessions
-- ✅ TURN fallback and push notifications
-- ✅ Device revocation and panic close
+- ✅ **Cross-platform clients**: Android, iOS, Expo, Vue web
+- ✅ **Account creation and username claim**
+- ✅ **Device key generation and secure storage**
+- ✅ **Real-time ephemeral messaging via WebSocket**
+- ✅ **In-memory ephemeral sessions**
+- ✅ **Friend management system**
+- ✅ **Environment-based configuration**
+- ✅ **Secure credential storage**
+- 🔄 Multi-device support via QR handoff
+- 🔄 Friend requests with safety number verification
+- 🔄 WebRTC messaging with Double Ratchet encryption
+- 🔄 TURN fallback and push notifications
+- 🔄 Device revocation and panic close
 
 ## Discovery Modes
 
@@ -156,3 +165,74 @@ A privacy-first messaging app with zero server storage. Messages exist only whil
 - E2E encryption implementation
 - Chunked file transfer
 - Decentralized relays
+
+## Environment Configuration
+
+The Whisp application supports multiple environments with flexible configuration:
+
+### Quick Start (Development)
+```bash
+# Start all services for local development
+./start-dev.sh
+```
+
+### Environment-Specific Configuration
+
+- **Development**: Localhost URLs, debug logging, relaxed CORS
+- **Staging**: Pre-production testing with staging URLs
+- **Production**: Optimized performance, secure configuration
+
+### Client Configuration
+
+- **Expo**: Environment-specific `app.json` files
+- **Vue**: Automatic hostname detection with fallbacks
+- **iOS**: Build configurations and Info.plist settings
+- **Android**: Build variants and environment-specific URLs
+
+### Server Configuration
+
+- **Environment Variables**: `NODE_ENV`, `PORT`, `JWT_SECRET`, `CORS_ORIGIN`
+- **Environment Files**: `env.development`, `env.production`
+- **Scripts**: `npm run dev:env`, `npm run prod:env`
+
+For detailed configuration instructions, see [ENVIRONMENT_CONFIG.md](./ENVIRONMENT_CONFIG.md).
+
+## Deployment
+
+### Development
+```bash
+# Start all services for local development
+./start-dev.sh
+```
+
+### Production
+```bash
+# Set required environment variables
+export JWT_SECRET="your-super-secure-jwt-secret"
+export CORS_ORIGIN="https://yourdomain.com"
+
+# Deploy all clients and server
+./deploy-prod.sh
+```
+
+## 📱 Client Applications
+
+### Android
+- **Technology**: Kotlin + Jetpack Compose
+- **Build**: `cd clients/android && ./gradlew assembleDebug`
+- **Run**: Open in Android Studio or `./gradlew installDebug`
+
+### iOS
+- **Technology**: Swift + SwiftUI
+- **Build**: Open `clients/ios/Whisp/Whisp.xcodeproj` in Xcode
+- **Run**: Build and run on device/simulator
+
+### Expo (Cross-platform)
+- **Technology**: React Native + Expo
+- **Build**: `cd clients/expo && npm run start:dev`
+- **Run**: Scan QR code with Expo Go app
+
+### Vue (Web)
+- **Technology**: Vue.js 3 + Axios
+- **Build**: Open `clients/vue/index.html` in browser
+- **Run**: Serve from any web server
